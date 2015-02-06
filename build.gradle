@@ -1,0 +1,102 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    group = 'com.github.kairyu'
+    version = '0.1.0'
+
+    repositories {
+        mavenCentral()
+    }
+    
+    jar {
+        manifest {
+            attributes 'Provider': 'Kai Ryu'
+        }
+    }
+}
+
+project(':programmer') {
+    defaultTasks 'shadowJar'
+
+    configurations {
+        shadow 
+    }
+
+    dependencies {
+        compile fileTree(dir: 'libs', include: '*.jar')
+        compile 'net.sourceforge.argparse4j:argparse4j:+'
+    }
+
+    jar {
+        baseName = 'flop-programmer'
+        manifest {
+            attributes 'Main-Class': 'com/github/kairyu/flop/programmer/Main'
+        }
+    }
+
+    shadowJar {
+        baseName = 'flop-programmer'
+        classifier = ''
+    }
+
+    artifacts {
+        shadow shadowJar
+    }
+}
+
+project(':applet') {
+    dependencies {
+        compile project(path: ':programmer', configuration: 'shadow')
+    }
+
+    jar {
+        baseName = 'flop-applet'
+        manifest {
+            attributes 'Codebase': '*',
+                'Permissions': 'all-permissions',
+                'Caller-Allowable-Codebase': '*',
+                'Application-Name': 'Flop Plugin',
+                'Application-Library-Allowable-Codebase': '*',
+                'Main-Class': 'com/github/kairyu/flop/programmer/Main'
+        }
+    }
+
+    shadowJar {
+        baseName = 'flop-applet'
+        classifier = ''
+    }
+
+    task signJar(dependsOn: shadowJar) {
+        description = "Signs JAR"
+        ext.output = jar.destinationDir.getPath() + "/flop.jar"
+
+        doLast {
+            ant.signjar(
+                jar: jar.archivePath,
+                signedjar: ext.output,
+                keystore: file('conf/flop.keystore'),
+                alias: 'signkey',
+                storepass: 'password',
+                keypass: 'password',
+            )
+        }
+    }
+}
+
+task dist(type: Copy, dependsOn: ':applet:signJar') {
+    description = "Distributions JAR"
+    from project(':applet').signJar.output
+    into 'dist'
+}

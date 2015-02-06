@@ -1,4 +1,24 @@
+# Editor files
+*.sw*
+
+# Compiled Source
 *.class
+
+# Build Files
+/build
+*/build
+
+# Gradle Files
+.gradle
+
+# IntelliJ Files
+.idea
+*.iml
+
+# Eclipse Files
+.classpath
+.project
+.settings
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
