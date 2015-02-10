@@ -292,6 +292,15 @@ public class Commands {
         return 0;
     }
 
+    public static int executeLaunch(final AtmelDevice device, final Arguments args) {
+        if (args.getLaunchNoReset()) {
+            return device.startAppNoReset();
+        }
+        else {
+            return device.startAppReset();
+        }
+    }
+
     public static int executeCommand(final AtmelDevice device, final Arguments args) {
         device.setType(args.getDeviceType());
         switch (args.getCommand()) {
@@ -301,9 +310,10 @@ public class Commands {
                 return executeFlash(device, args);
             //case eflash:
             //case user:
-            //case start_app:
-            //case reset:
-            //case launch:
+            case start_app:
+            case reset:
+            case launch:
+                return executeLaunch(device, args);
             case get:
                 return executeGet(device, args);
             //case getfuse:

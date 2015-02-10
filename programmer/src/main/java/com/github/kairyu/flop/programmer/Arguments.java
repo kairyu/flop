@@ -190,6 +190,12 @@ public class Arguments {
     }
 
     public boolean getLaunchNoReset() {
+        if (this.command == Command.start_app) {
+            return true;
+        }
+        else if (this.command == Command.reset) {
+            return false;
+        }
         return this.ns.getBoolean("no_reset");
     }
 
@@ -283,6 +289,9 @@ public class Arguments {
         launch.addArgument("--no-reset")
                 .action(storeTrue())
                 .help("jump directly into the main program");
+
+        Subparser start = commands.addParser("start");
+        Subparser reset = commands.addParser("reset");
 
         Subparser read = commands.addParser("read")
                 .help("read the program memory in flash and output non-blank pages in ihex format");

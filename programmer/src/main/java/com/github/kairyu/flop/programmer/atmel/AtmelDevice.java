@@ -573,10 +573,40 @@ public class AtmelDevice extends DfuDevice {
     }
 
     public int startAppReset() {
+        log.trace("atmel_start_app_reset( %s )", this.getHandle().hashCode());
+
+        ByteBuffer command = ByteBuffer.allocateDirect(3)
+                .put(new byte[] { 0x04, 0x03, 0x00 });
+
+        if (this.download(command) != command.capacity()) {
+            log.debug("dfu_download failed.");
+            return -1;
+        }
+
+        if (this.download(ByteBuffer.allocateDirect(0)) != 0) {
+            log.debug("dfu_download failed.");
+            return -2;
+        }
+
         return 0;
     }
 
     public int startAppNoReset() {
+        log.trace("atmel_start_app_noreset( %s )", this.getHandle().hashCode());
+
+        ByteBuffer command = ByteBuffer.allocateDirect(5)
+                .put(new byte[] { 0x04, 0x03, 0x01, 0x00, 0x00 });
+
+        if (this.download(command) != command.capacity()) {
+            log.debug("dfu_download failed.");
+            return -1;
+        }
+
+        if (this.download(ByteBuffer.allocateDirect(0)) != 0) {
+            log.debug("dfu_download failed.");
+            return -2;
+        }
+
         return 0;
     }
 
