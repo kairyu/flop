@@ -38,7 +38,8 @@ public enum Command {
     reset(),
     setfuse(),
     setsecure(),
-    start_app("start");
+    start_app("start"),
+    none();
 
     private final String name;
 

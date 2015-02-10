@@ -54,4 +54,13 @@ public enum MemoryUnit {
         throw new IllegalArgumentException();
     }
 
+    public static MemoryUnit getByName(final String name) {
+        for (MemoryUnit unit: MemoryUnit.values()) {
+            if (unit.toString().equalsIgnoreCase(name)) {
+                return unit;
+            }
+        }
+        throw new IllegalArgumentException();
+    }
+
 }

@@ -17,41 +17,98 @@
 
 package com.github.kairyu.flop.applet;
 
+import com.github.kairyu.flop.programmer.Log;
 import com.github.kairyu.flop.programmer.atmel.AtmelDevice;
+import com.github.kairyu.flop.programmer.atmel.DeviceInfo;
+import com.github.kairyu.flop.programmer.atmel.DeviceType;
 import com.github.kairyu.flop.programmer.atmel.Target;
+import com.github.kairyu.flop.programmer.command.Get;
 
 import netscape.javascript.JSObject;
 
+import org.usb4java.Device;
 import org.usb4java.LibUsbException;
 
 import java.applet.Applet;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class FlopApplet extends Applet {
+/**
+ * @author Kai Ryu
+ *
+ */
+public class FlopApplet extends Applet implements Error {
 
-    private Target target = Target.none;
-    private AtmelDevice device;
+    private Commands commands;
 
-    public void init() {
-        boolean success = true;
-        try {
-            device = new AtmelDevice();
-            device.init();
-        }
-        catch (LibUsbException e) {
-            System.err.println("can't init libusb.");
-            success = false;
-        }
+    @Override
+    public void start() {
+        super.start();
+        commands = new Commands();
         JSObject window = JSObject.getWindow(this);
-        window.call("flopInit", success);
+        window.call("flopInit", this.commands.init());
+        new AtomicReference<Thread>(commands).get().start();
     }
 
-    public void setTarget(final String name) {
-        try {
-            target = Target.getByName(name);
-        }
-        catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void stop() {
+        this.commands.uninit();
+        super.stop();
+    }
+
+    @Override
+    public void init() {
+    }
+
+    public void setQuiet(final boolean quiet) {
+        this.commands.setQuiet(quiet);
+    }
+
+    public void setDebug(final int debug) {
+        this.commands.setDebug(debug);
+    }
+
+    public int setTarget(final String name) {
+        return this.commands.setTarget(name);
+    }
+
+    public int get(final String name) {
+        return this.commands.get(name);
+    }
+
+    public int get() {
+        return this.commands.get("bootloader-version");
+    }
+
+    public int erase(final boolean force, final boolean validate) {
+        return this.commands.erase(force, validate);
+    }
+
+    public int erase() {
+        return this.commands.erase(false, true);
+    }
+
+    public int flash(final String hex, final String segment, final boolean force, final boolean validate) {
+        return this.commands.flash(hex, segment, force, validate);
+    }
+
+    public int flash(final String hex) {
+        return this.commands.flash(hex, "flash", false, true);
+    }
+
+    public int flashEEPROM(final String hex) {
+        return this.commands.flash(hex, "eeprom", true, true);
+    }
+
+    public int startApp() {
+        return this.commands.launch(false);
+    }
+
+    public int reset() {
+        return this.commands.launch(true);
+    }
+
+    public int launch(final boolean reset) {
+        return this.commands.launch(reset);
     }
 
 }
