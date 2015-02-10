@@ -160,7 +160,7 @@ public class Commands {
         }
 
         final boolean quiet = args.getQuiet();
-        int result = bufferOut.readHex(args.getFlashFileName(), quiet);
+        int result = bufferOut.readHexFile(args.getFlashFileName(), quiet);
         if (result < 0) {
             log.debug("Something went wrong with creating the memory image.");
             return Error.BUFFER_INIT_ERROR;

@@ -17,6 +17,7 @@
 
 package com.github.kairyu.flop.programmer.atmel;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -67,12 +68,13 @@ public class BufferOut extends AtmelBuffer {
         }
     }
 
-    public int readHex(final String filename, final boolean quiet) {
-        if (this.getTotalSize() <= 0) {
-            log.debug("Must provide valid memory size in bout");
-            return -1;
-        }
+    public int readHexString(final String hex, final boolean quiet) {
+        InputStream is = new ByteArrayInputStream(hex.getBytes());
 
+        return this.readHex(is, quiet);
+    }
+
+    public int readHexFile(final String filename, final boolean quiet) {
         if (filename == null) {
             if (!quiet) {
                 System.err.println("Invalid filename.");
@@ -90,6 +92,15 @@ public class BufferOut extends AtmelBuffer {
             return -3;
         }
 
+        return this.readHex(is, quiet);
+    }
+
+    private int readHex(final InputStream is, final boolean quiet) {
+        if (this.getTotalSize() <= 0) {
+            log.debug("Must provide valid memory size in bout");
+            return -1;
+        }
+
         IntelHexParser ihp = new IntelHexParser(is);
         DataListener dl = new DataListener(quiet);
         ihp.setDataListener(dl);
@@ -98,7 +109,7 @@ public class BufferOut extends AtmelBuffer {
             ihp.parse();
         } catch (IOException e) {
             if (!quiet) {
-                System.err.println(String.format("Error opening %s", filename));
+                System.err.println(String.format("Error opening %s", "source"));
             }
             return -3;
         } catch (Exception e) {
