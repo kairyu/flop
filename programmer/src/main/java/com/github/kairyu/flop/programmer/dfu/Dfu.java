@@ -335,27 +335,4 @@ public abstract class Dfu {
         }
     }
 
-    public static void test() {
-        Context context = new Context();
-        int result = LibUsb.init(context);
-        DeviceList list = new DeviceList();
-        result = LibUsb.getDeviceList(context, list);
-
-        try {
-            for (Device device: list) {
-                int address = LibUsb.getDeviceAddress(device);
-                int busNumber = LibUsb.getBusNumber(device);
-                DeviceDescriptor descriptor = new DeviceDescriptor();
-                result = LibUsb.getDeviceDescriptor(device, descriptor);
-                System.out.format("Bus %03d, Device %03d, Vendor %04x, Product %04x%n",
-                        busNumber, address, descriptor.idVendor(), descriptor.idProduct());
-            }
-        }
-        finally {
-            LibUsb.freeDeviceList(list, true);
-        }
-
-        LibUsb.exit(context);
-    }
-
 }
