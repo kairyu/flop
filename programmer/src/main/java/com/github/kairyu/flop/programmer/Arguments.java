@@ -128,51 +128,27 @@ public class Arguments {
     }
 
     public int getMemoryAddressTop() {
-        return this.target.getMemorySize() - 1;
+        return this.target.getMemoryAddressTop();
     }
 
     public int getMemoryAddressBottom() {
-        return 0;
+        return this.target.getMemoryAddressBottom();
     }
 
     public int getFlashAddressTop() {
-        if (this.getBootloaderAtHighMem()) {
-            return this.getMemoryAddressTop() - this.target.getBootloaderSize();
-        }
-        else {
-            return this.getMemoryAddressTop();
-        }
+        return this.target.getFlashAddressTop();
     }
 
     public int getFlashAddressBottom() {
-        if (this.getBootloaderAtHighMem()) {
-            return this.getMemoryAddressBottom();
-        }
-        else {
-            return this.getMemoryAddressBottom() + this.target.getBootloaderSize();
-        }
+        return this.target.getFlashAddressBottom();
     }
 
     public int getBootloaderTop() {
-        if (this.getBootloaderAtHighMem()) {
-            return this.getMemoryAddressTop();
-        }
-        else {
-            return this.target.getBootloaderSize() - 1;
-        }
+        return this.target.getBootloaderTop();
     }
 
     public int getBootloaderBottom() {
-        if (this.getBootloaderAtHighMem()) {
-            return this.target.getMemorySize() - this.target.getBootloaderSize();
-        }
-        else {
-            return this.getMemoryAddressBottom();
-        }
-    }
-
-    public boolean getBootloaderAtHighMem() {
-        return this.target.getBootloaderAtHighMem();
+        return this.target.getBootloaderBottom();
     }
 
     public String getConfigureName() {

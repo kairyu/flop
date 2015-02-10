@@ -197,6 +197,50 @@ public enum Target {
         return this.eepromMemorySize;
     }
 
+    public int getMemoryAddressTop() {
+        return this.getMemorySize() - 1;
+    }
+
+    public int getMemoryAddressBottom() {
+        return 0;
+    }
+
+    public int getFlashAddressTop() {
+        if (this.getBootloaderAtHighMem()) {
+            return this.getMemoryAddressTop() - this.getBootloaderSize();
+        }
+        else {
+            return this.getMemoryAddressTop();
+        }
+    }
+
+    public int getFlashAddressBottom() {
+        if (this.getBootloaderAtHighMem()) {
+            return this.getMemoryAddressBottom();
+        }
+        else {
+            return this.getMemoryAddressBottom() + this.getBootloaderSize();
+        }
+    }
+
+    public int getBootloaderTop() {
+        if (this.getBootloaderAtHighMem()) {
+            return this.getMemoryAddressTop();
+        }
+        else {
+            return this.getBootloaderSize() - 1;
+        }
+    }
+
+    public int getBootloaderBottom() {
+        if (this.getBootloaderAtHighMem()) {
+            return this.getMemorySize() - this.getBootloaderSize();
+        }
+        else {
+            return this.getMemoryAddressBottom();
+        }
+    }
+
     @Override
     public String toString() {
         return this.getName();
