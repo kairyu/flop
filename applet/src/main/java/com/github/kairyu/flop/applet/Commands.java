@@ -195,6 +195,7 @@ public class Commands extends Thread implements Runnable {
 
     private int executeCommand() throws Exception {
         if (initDevice() != 0) {
+            this.command = Command.none;
             return Error.NO_DEVICE_PRESENT;
         }
         try {
